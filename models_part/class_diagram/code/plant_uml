@@ -1,56 +1,76 @@
 @startuml
 
 class ImageCaptureModule {
-    -cameraHardware: Camera
-    -captureSettings: CaptureSettings
-    +triggerCapture(): void
-    +getImage(): Image
-}
-class Image {
-    -data: byte[]
-    -width: int
-    -height: int
-    +get_resolution(): Resolution
-    +get_data(): byte[]
+    -imageBuffer: ImageBuffer               'Abstract Data Type'
+    -resolution: Resolution                 'Abstract Data Type'
+    
+    +triggerCapture() : void
+    +setResolution(width, height)
+    +get_image() : Image                    'Assume a Image/Photo type'
+    +reveiw_image(): bool                   
 }
 class OCRProcessingEngine {
-    -ocrEngine: OCREngine
     -accuracy: float
-    +process_image(image: Image): StructuredText
-    +font_handeling(): void
-    +process_PDF_layout(): StructuredText
-    +get_accuracy(): float
-}
-
-ImageCaptureModule ..|> "provides image" OCRProcessingEngine 
-ImageCaptureModule --|> "creates" Image
-OCRProcessingEngine --|> "processes" Image
-
-class StructuredText {
-    -content: string
-    -format: text_format
-    -confidence: float
-    +get_text(): string
-    +get_format() : text_format
+    
+    +process_image(Image: image)
+    +extract_text()
+    +manage_fonts()
+    +process_pdf()
 }
 class TextAnalysisModule {
-    -keywords: List <String>
-    -highlighter: text_highlighter
-    +detect_keywords(text: structured_text): List<Match>
-    +highlightedMatches(matches: List<Match>)
-    +searchPhrase(phrase: string) : List<Match>
-    +LLM_data_request(text: structured_text)
+    -keywords: List<string>
+
+
+    +find_keywords(List<string>)
+    +highlight_keywords(List<Start_keyword_loc, End_keyword_loc>)
+    +searchPhrase(phrase)
+    +wrap_for_LLM(text)
 }
-class LLM_Request {
-    -text: string
-    +getText(): string
-}
-class database_query {
-    -queryType: string
-    -drug_name: string
-    -interaction_type: string
-    +get_query_type() : string
+class Image_Class {
+    -image : Image
+    -width : int
+    -height: int
 }
 
-OCRProcessingEngine --|> "produces" StructuredText
-TextAnalysisModule --|> "analysis" StructuredText
+' Relations '
+ImageCaptureModule --> "creates" Image_Class
+Image_Class -->"Analysis" OCRProcessingEngine 
+OCRProcessingEngine-->"process" TextAnalysisModule
+
+
+class LLMRequest {
+    -text
+    -parameters
+    
+    +LLM_request(Text text, Parameters, parameters)
+}
+class LLMResponse {
+    -summary: string
+    -status_code: int
+}
+class IntergrationInterface {
+    
+    +send_to_LLM(request) : status_code
+    +retreive_from_LLM() : AI_Response
+    +querry_database(query)
+    +handel_timeout()
+    +dev_log(): void
+}
+class DatabaseResult {
+    -Interactions: List<string>
+    -status_code: int
+}
+TextAnalysisModule-->"sends" IntergrationInterface
+IntergrationInterface-->"Calls" LLMRequest
+IntergrationInterface-->"Recives" LLMResponse
+IntergrationInterface<--"Receives" DatabaseResult
+
+class StorageModule {
+    -id: int
+
+    +save_document(id, media, metadata)               ' Media is a data type for image or document'
+    +search_documents(id): media
+    +delete_document(id) : void
+}
+
+' What about text in TextAnalysisModule'
