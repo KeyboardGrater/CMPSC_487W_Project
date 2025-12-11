@@ -1,12 +1,12 @@
 @startuml
 
 class ImageCaptureModule {
-    -imageBuffer: ImageBuffer               'Abstract Data Type'
-    -resolution: Resolution                 'Abstract Data Type'
+    -imageBuffer: ImageBuffer              
+    -resolution: Resolution                 
     
     +triggerCapture() : void
     +setResolution(width, height)
-    +get_image() : Image                    'Assume a Image/Photo type'
+    +get_image() : Image                    
     +reveiw_image(): bool                   
 }
 class OCRProcessingEngine {
@@ -60,6 +60,7 @@ class DatabaseResult {
     -Interactions: List<string>
     -status_code: int
 }
+
 TextAnalysisModule-->"sends" IntergrationInterface
 IntergrationInterface-->"Calls" LLMRequest
 IntergrationInterface-->"Recives" LLMResponse
@@ -68,9 +69,35 @@ IntergrationInterface<--"Receives" DatabaseResult
 class StorageModule {
     -id: int
 
-    +save_document(id, media, metadata)               ' Media is a data type for image or document'
+    +save_document(id, media, metadata)             
     +search_documents(id): media
     +delete_document(id) : void
 }
+
+Image_Class-->"stores" StorageModule
+TextAnalysisModule-->"stores" StorageModule
+
+class Document {
+    -id: int
+    -content
+    -metadata
+}
+
+StorageModule-->"manages" Document
+
+class Display_UI_Module {
+    -glassesDisplay
+
+    +RenderOverlay(content)
+    +display_LLM_summary()
+    +display_database_results()
+    +show_highlighted_text()
+    +process_voice_commands()
+    +process_gesture()
+}
+
+IntergrationInterface-->"Send Data" Display_UI_Module
+StorageModule-->"Sends Data" Display_UI_Module
+
 
 ' What about text in TextAnalysisModule'
