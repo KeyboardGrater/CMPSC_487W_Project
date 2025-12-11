@@ -34,8 +34,8 @@ class Image_Class {
 
 ' Relations '
 ImageCaptureModule --> "creates" Image_Class
-Image_Class -->"Analysis" OCRProcessingEngine 
-OCRProcessingEngine-->"process" TextAnalysisModule
+Image_Class <--"analysis" OCRProcessingEngine 
+OCRProcessingEngine..>"process" TextAnalysisModule
 
 
 class LLMRequest {
@@ -61,10 +61,10 @@ class DatabaseResult {
     -status_code: int
 }
 
-TextAnalysisModule-->"sends" IntergrationInterface
-IntergrationInterface-->"Calls" LLMRequest
-IntergrationInterface-->"Recives" LLMResponse
-IntergrationInterface<--"Receives" DatabaseResult
+TextAnalysisModule..>"sends" IntergrationInterface
+IntergrationInterface-->"sends" LLMRequest
+IntergrationInterface-->"recives" LLMResponse
+IntergrationInterface<--"receives" DatabaseResult
 
 class StorageModule {
     -id: int
@@ -74,8 +74,8 @@ class StorageModule {
     +delete_document(id) : void
 }
 
-Image_Class-->"stores" StorageModule
-TextAnalysisModule-->"stores" StorageModule
+Image_Class..>"stores" StorageModule
+TextAnalysisModule..>"stores" StorageModule
 
 class Document {
     -id: int
@@ -97,7 +97,6 @@ class Display_UI_Module {
 }
 
 IntergrationInterface-->"Send Data" Display_UI_Module
-StorageModule-->"Sends Data" Display_UI_Module
+StorageModule..>"sends Data" Display_UI_Module
 
-
-' What about text in TextAnalysisModule'
+@enduml
