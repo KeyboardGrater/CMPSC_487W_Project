@@ -1,0 +1,56 @@
+@startuml
+
+class ImageCaptureModule {
+    -cameraHardware: Camera
+    -captureSettings: CaptureSettings
+    +triggerCapture(): void
+    +getImage(): Image
+}
+class Image {
+    -data: byte[]
+    -width: int
+    -height: int
+    +get_resolution(): Resolution
+    +get_data(): byte[]
+}
+class OCRProcessingEngine {
+    -ocrEngine: OCREngine
+    -accuracy: float
+    +process_image(image: Image): StructuredText
+    +font_handeling(): void
+    +process_PDF_layout(): StructuredText
+    +get_accuracy(): float
+}
+
+ImageCaptureModule ..|> "provides image" OCRProcessingEngine 
+ImageCaptureModule --|> "creates" Image
+OCRProcessingEngine --|> "processes" Image
+
+class StructuredText {
+    -content: string
+    -format: text_format
+    -confidence: float
+    +get_text(): string
+    +get_format() : text_format
+}
+class TextAnalysisModule {
+    -keywords: List <String>
+    -highlighter: text_highlighter
+    +detect_keywords(text: structured_text): List<Match>
+    +highlightedMatches(matches: List<Match>)
+    +searchPhrase(phrase: string) : List<Match>
+    +LLM_data_request(text: structured_text)
+}
+class LLM_Request {
+    -text: string
+    +getText(): string
+}
+class database_query {
+    -queryType: string
+    -drug_name: string
+    -interaction_type: string
+    +get_query_type() : string
+}
+
+OCRProcessingEngine --|> "produces" StructuredText
+TextAnalysisModule --|> "analysis" StructuredText
