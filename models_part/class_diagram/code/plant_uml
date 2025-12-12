@@ -62,9 +62,9 @@ class DatabaseResult {
 }
 
 TextAnalysisModule..>"sends" IntergrationInterface
-IntergrationInterface-->"sends" LLMRequest
-IntergrationInterface-->"recives" LLMResponse
-IntergrationInterface<--"receives" DatabaseResult
+IntergrationInterface..>"creates" LLMRequest
+IntergrationInterface<.."receives" LLMResponse
+IntergrationInterface<.."receives" DatabaseResult
 
 class StorageModule {
     -id: int
@@ -74,8 +74,8 @@ class StorageModule {
     +delete_document(id) : void
 }
 
-Image_Class..>"stores" StorageModule
-TextAnalysisModule..>"stores" StorageModule
+Image_Class..>"stored in" StorageModule
+TextAnalysisModule..>"stores data" StorageModule
 
 class Document {
     -id: int
@@ -96,7 +96,7 @@ class Display_UI_Module {
     +process_gesture()
 }
 
-IntergrationInterface-->"Send Data" Display_UI_Module
-StorageModule..>"sends Data" Display_UI_Module
+IntergrationInterface..>"sends results" Display_UI_Module
+StorageModule..>"display data" Display_UI_Module
 
 @enduml
