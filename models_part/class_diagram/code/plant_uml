@@ -31,13 +31,6 @@ class Image_Class {
     -width : int
     -height: int
 }
-
-' Relations '
-ImageCaptureModule --> "creates" Image_Class
-Image_Class <--"analysis" OCRProcessingEngine 
-OCRProcessingEngine..>"process" TextAnalysisModule
-
-
 class LLMRequest {
     -text
     -parameters
@@ -60,12 +53,6 @@ class DatabaseResult {
     -Interactions: List<string>
     -status_code: int
 }
-
-TextAnalysisModule..>"sends" IntergrationInterface
-IntergrationInterface..>"creates" LLMRequest
-IntergrationInterface<.."receives" LLMResponse
-IntergrationInterface<.."receives" DatabaseResult
-
 class StorageModule {
     -id: int
 
@@ -73,18 +60,11 @@ class StorageModule {
     +search_documents(id): media
     +delete_document(id) : void
 }
-
-Image_Class..>"stored in" StorageModule
-TextAnalysisModule..>"stores data" StorageModule
-
 class Document {
     -id: int
     -content
     -metadata
 }
-
-StorageModule-->"manages" Document
-
 class Display_UI_Module {
     -glassesDisplay
 
@@ -95,6 +75,22 @@ class Display_UI_Module {
     +process_voice_commands()
     +process_gesture()
 }
+
+' Relations '
+
+ImageCaptureModule --> "creates" Image_Class
+Image_Class <--"analysis" OCRProcessingEngine 
+OCRProcessingEngine..>"process" TextAnalysisModule
+
+TextAnalysisModule..>"sends" IntergrationInterface
+IntergrationInterface..>"creates" LLMRequest
+IntergrationInterface<.."receives" LLMResponse
+IntergrationInterface<.."receives" DatabaseResult
+
+Image_Class..>"stored in" StorageModule
+TextAnalysisModule..>"stores data" StorageModule
+
+StorageModule-->"manages" Document
 
 IntergrationInterface..>"sends results" Display_UI_Module
 StorageModule..>"display data" Display_UI_Module
